@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import Header from "../components/header";
-import BodyContent from "./bodyContent";
 
 export default function HomePage(){
     return(
