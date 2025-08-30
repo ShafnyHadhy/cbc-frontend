@@ -1,49 +1,31 @@
+import { createClient } from "@supabase/supabase-js";
 import { useState } from "react"
+import mediaUpload from "../utils/mediaUpload";
+
+
 
 export default function TestPage(){
 
-    const [count, setCount] = useState(10)
-    const [status, setStatus] = useState("online")
+    const [file, setFile] = useState(null);
+
+    async function uploadFile(){
+
+      const link = await mediaUpload(file);
+      console.log(link);
+        
+    }
+
 
     return(
         <div className="w-full h-full flex justify-center items-center">
-            <div className="w-[500px] h-[500px] bg-amber-100 text-white flex flex-col justify-center items-center gap-10">
-                <div className="flex justify-center items-center gap-8">
-                    <button onClick={
-                        ()=>{
-                            console.log("Decreasing...")
-                            setCount(count - 1)
-                        }
-                    } className="w-[100px] h-[40px] bg-accent rounded-lg">
-                        -
-                    </button>
-                    <span className="text-5xl text-accent"> {count} </span>
-                    <button onClick={
-                        ()=>{
-                            console.log("Increasing...")
-                            setCount(count + 1)
-                        }
-                    } className="w-[100px] h-[40px] bg-accent rounded-lg">
-                        +
-                    </button>
-                </div>
-                <div className="flex flex-col justify-center items-center">
-
-                    <span className="text-accent text-5xl mb-5">{status}</span>
-
-                    <div className="flex flex-row gap-[20px]">
-                        <button onClick={()=>{setStatus("online")}} className="w-[100px] bg-accent h-[40px] rounded-lg">
-                            online
-                        </button>
-                        <button onClick={()=>{setStatus("offline")}} className="w-[100px] bg-accent h-[40px] rounded-lg">
-                            offline
-                        </button>
-                        <button onClick={()=>{setStatus("deactivated")}} className="w-[100px] bg-accent h-[40px] rounded-lg">
-                            deactivated
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <input type="file" onChange={
+                (e)=>{
+                    setFile(e.target.files[0]);
+                }
+            }/>
+            <button className="p-2 bg-blue-500 text-white " onClick={uploadFile}>
+                Add File
+            </button>
         </div>
     )
 }
