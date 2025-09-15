@@ -19,7 +19,7 @@ export default function AdminUpdateProduct() {
   const navigate = useNavigate();
 
   async function updateproduct(){
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");  
 
     if(token == null){
         navigate("/login");

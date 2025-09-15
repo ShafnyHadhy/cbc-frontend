@@ -53,7 +53,7 @@ export default function AdminPage() {
             <Route path="/orders" element={<h1 className="p-6 text-2xl font-bold">Orders</h1>} />
             <Route path="/users" element={<h1 className="p-6 text-2xl font-bold">Users</h1>} />
             <Route path="/add-product" element={<AdminAddNewProduct />} />
-            <Route path="/update-product" element={<AdminUpdateProduct/>}/>
+            <Route path="/update-product" element={<AdminUpdateProduct/>} />
           </Routes>
         </div>
       </div>
