@@ -52,9 +52,23 @@ export function addToCart(product, quantity){
                 }
             )
         }else{
-           cart[ existingItem].quantity = newQuantity
+           cart[existingItemIndex].quantity = newQuantity
         }
     }
 
-    locatStorage.setItem("cart", JSON.stringify(cart))
+    localStorage.setItem("cart", JSON.stringify(cart))
+}
+
+export default function getTotal(){
+   
+    const cart = loadCart();
+
+    let total = 0;
+
+    cart.forEach(
+        (item)=>{
+            total += item.price*item.quantity;
+        }
+    )
+    return total
 }
