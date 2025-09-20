@@ -1,11 +1,14 @@
 import { CiCircleChevDown, CiCircleChevUp } from "react-icons/ci";
 import { BiTrash } from "react-icons/bi";
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 export default function CheckoutPage(){
 
     const location = useLocation()
+    const navigate = useNavigate()
 
     const [cart, setCart] = useState(location.state);
 
@@ -16,8 +19,52 @@ export default function CheckoutPage(){
                 total += item.price * item.quantity
             }
         )
-
         return total;
+    }
+
+    async function purchaseCart(){
+        const token = localStorage.getItem("token");
+
+        if(token == null){
+            toast.error("Please login to place an order!!!");
+            navigate("/login")
+            return;
+        }
+
+        try{
+            const items = []
+
+            for(let i = 0; i<cart.length; i++){
+                items.push(
+                    {
+                        productID: cart[i].productID,
+                        quantity: cart[i].quantity
+                    }
+                )
+            }
+
+            await axios.post(import.meta.env.VITE_API_URL + "/api/orders",{
+                address: "No 123, Main street, City",
+                items: items
+            },{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+
+            toast.success("Order placed successfully");
+
+        }catch(error){
+            toast.error("Failed to place an Order")
+            console.error(error);
+
+            //if error is 400
+            if(error.response && error.response.status == 400){
+                
+                toast.error(error.response.data.message)
+
+            }
+        }
     }
 
     return(
@@ -30,7 +77,8 @@ export default function CheckoutPage(){
                                 <button className="absolute text-red-500 right-[-50px] font-bold text-2xl rounded-full aspect-square hover:bg-red-500 hover:text-white p-[5px]"
                                 onClick={
                                     ()=>{
-                                        
+                                        const newCart = cart.filter((_, i) => i !== index)
+                                        setCart(newCart)
                                     }
                                 }
                                 ><BiTrash/></button>
@@ -59,7 +107,6 @@ export default function CheckoutPage(){
                                             if(newCart[index].quantity>1){
                                                 newCart[index].quantity -= 1
                                             }
-                                            
                                             setCart(newCart)
                                         }
                                     }
@@ -77,7 +124,7 @@ export default function CheckoutPage(){
                     })
                 }
                 <div className="w-full h-[120px] bg-white flex justify-end items-center relative">
-                    <button to="" className="absolute left-0 bg-accent text-white px-6 py-3 ml-[20px] hover:bg-accent/80">Order</button>
+                    <button to="" onClick={purchaseCart} className="absolute left-0 bg-accent text-white px-6 py-3 ml-[20px] hover:bg-accent/80">Order</button>
                     <div className="h-[50px]">
                         <span className="font-semibold text-accent w-full text-right text-2xl pr-[10px] mt-[5px]">Total: LKR {getTotal().toFixed(2)}</span>
                     </div>
