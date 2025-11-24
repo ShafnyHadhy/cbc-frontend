@@ -1,14 +1,19 @@
 import { BsCart2, BsGraphUpArrow } from "react-icons/bs";
 import { FiBox } from "react-icons/fi";
 import { HiOutlineUsers } from "react-icons/hi";
-import { Link, Route, Routes, useLocation } from "react-router-dom";
+import { Link, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import AdminProductPage from "./admin/adminProductPage";
 import AdminAddNewProduct from "./admin/adminAddNewProduct";
 import AdminUpdateProduct from "./admin/adminUpdateProduct";
 import AdminOrdersPage from "./admin/adminOrdersPage";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { Loader } from "../components/loader";
 
 export default function AdminPage() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const menuItems = [
     { path: "/admin", label: "Dashboard", icon: <BsGraphUpArrow /> },
@@ -16,6 +21,37 @@ export default function AdminPage() {
     { path: "/admin/products", label: "Products", icon: <FiBox /> },
     { path: "/admin/users", label: "Users", icon: <HiOutlineUsers /> },
   ];
+
+  const [userLoaded, setUserLoaded] = useState(false);
+
+  useEffect(
+    ()=> {
+      const token = localStorage.getItem("token");
+      if(token == null){
+        toast.error("Please login to access the admin panel");
+        navigate("/login");
+        return 
+      }
+
+      axios.get(import.meta.env.VITE_API_URL + "/api/users/me", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      }).then((res) => {
+        if(res.data.role !== "admin"){
+          toast.error("You are not authorized to access admin panel")
+          navigate("/")
+          return;
+        }
+        setUserLoaded(true);
+      }).catch(() => {
+        toast.error("Session expired please login again!");
+        localStorage.removeItem("token");
+        navigate("/login")
+      });
+      
+    }, []
+  )
 
   return (
     <div className="w-full h-full bg-primary flex p-2">
@@ -48,14 +84,14 @@ export default function AdminPage() {
       {/* Content */}
       <div className="w-[calc(100%-280px)] h-full border-[4px] border-accent rounded-[15px] overflow-hidden bg-white shadow-xl">
         <div className="w-full h-full max-w-full max-h-full overflow-y-scroll">
-          <Routes path="/">
+          {userLoaded?<Routes path="/">
             <Route path="/" element={<h1 className="p-6 text-2xl font-bold">Dashboard</h1>} />
             <Route path="/products" element={<AdminProductPage />} />
             <Route path="/orders" element={<AdminOrdersPage/>} />
             <Route path="/users" element={<h1 className="p-6 text-2xl font-bold">Users</h1>} />
             <Route path="/add-product" element={<AdminAddNewProduct />} />
             <Route path="/update-product" element={<AdminUpdateProduct/>} />
-          </Routes>
+          </Routes>:<Loader/>}
         </div>
       </div>
     </div>

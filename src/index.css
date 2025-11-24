@@ -4,3 +4,17 @@
   --color-primary: #fef3e2;
   --color-secondary: #393e46;
 }
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out forwards;
+}
+

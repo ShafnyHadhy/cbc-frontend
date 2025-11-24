@@ -1,12 +1,33 @@
+import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: (response) => {
+      axios.post(import.meta.env.VITE_API_URL + "/api/users/google-login", { 
+        token: response.access_token 
+      }).then((res) => {
+        localStorage.setItem("token", res.data.token);
+        toast.success("Google login successful!");
+        const user = res.data.user;
+        if (user.role === "admin") {
+          navigate("/admin");
+        }else {
+          navigate("/");
+        }
+      }).catch((e) => {
+        console.error("Google login failed:", e);
+        toast.error("Google login failed");
+      })
+    },
+  });
 
   async function login() {
     try {
@@ -76,17 +97,23 @@ export default function LoginPage() {
             {/* Login Button */}
             <button
               onClick={login}
-              className="w-full h-12 bg-accent text-white font-semibold rounded-xl shadow-md hover:bg-[#e36f1d] transition"
+              className="w-full h-12 bg-accent text-white font-semibold rounded-xl shadow-md hover:bg-[#e36f1d] transition mb-2"
             >
               Log In
+            </button>
+            <button
+              onClick={googleLogin}
+              className="w-full h-12 bg-accent text-white font-semibold rounded-xl shadow-md hover:bg-[#e36f1d] transition"
+            >
+              Google Log In
             </button>
 
             {/* Extra Links */}
             <p className="text-center text-sm text-gray-600 mt-4">
-              Don’t have an account?{" "}
-              <a href="/register" className="text-accent font-medium hover:underline">
+              Don't have an account?{" "}
+              <Link to="/register" className="text-accent font-medium hover:underline">
                 Sign Up
-              </a>
+              </Link>
             </p>
           </div>
         </div>
