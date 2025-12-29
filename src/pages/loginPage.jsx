@@ -94,6 +94,24 @@ export default function LoginPage() {
               className="w-full h-12 px-4 mb-6 rounded-xl border border-gray-300 focus:border-accent focus:ring-2 focus:ring-accent/50 outline-none transition"
             />
 
+            {/* Password Input */}
+            <input
+              type="password"
+              placeholder="Enter your password"
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full h-12 px-4 mb-2 rounded-xl border border-gray-300 focus:border-accent focus:ring-2 focus:ring-accent/50 outline-none transition"
+            />
+
+            {/* Forgot Password */}
+            <div className="text-right mb-6">
+              <Link
+                to="/forget-password"
+                className="text-sm text-accent hover:underline font-medium"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
             {/* Login Button */}
             <button
               onClick={login}

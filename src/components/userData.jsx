@@ -80,7 +80,7 @@ export default function UserData() {
           className="flex items-center cursor-pointer px-3 py-2 rounded-full hover:bg-primary transition"
         >
           <img
-            src={user?.image || "/user.png"}
+            src={"/user.png"}
             alt="profile"
             className="h-[30px] w-[30px] rounded-full border-2 border-accent object-cover"
           />
